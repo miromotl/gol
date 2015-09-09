@@ -15,6 +15,7 @@
 package main
 
 import (
+	"github.com/spf13/cobra"
 	"fmt"
 )
 
@@ -113,7 +114,7 @@ func gnuplotHeader() {
 	fmt.Println("set yrange[-50:50]")
 }
 
-// gnuplotCell prints the coordinates of a cell
+// gnuplotWorld prints the coordinates of the cells in the world
 func gnuplotWorld(world World) {
 	fmt.Println("plot '-' with points pointtype 6")
 
@@ -125,6 +126,31 @@ func gnuplotWorld(world World) {
 }
 
 func main() {
+	ticks := 10  // how many ticks the game is running
+
+	// Cobra configuration
+	var rootCmd = &cobra.Command{
+		Use: "gol",
+		Short: "Run Conway's Game of Life",
+		Long: `The Game of Life, also known simply as Life, is a 
+cellular automaton devised by the British mathematician John Horton Conway in 
+1970.
+
+The "game" is a zero-player game, meaning that its evolution is determined by 
+its initial state, requiring no further input. One interacts with the Game of 
+Life by creating an initial configuration and observing how it evolves or, for 
+advanced players, by creating patterns with particular properties.`,
+		Run: func(cmd *cobra.Command, args []string) {
+			gol(ticks)
+		},
+	}
+
+	rootCmd.Flags().IntVarP(&ticks, "ticks", "t", 10, "ticks to run the game")
+
+	rootCmd.Execute()
+}
+
+func gol(ticks int) {
 	// The world
 	var world World
 	world = make(World)
@@ -140,7 +166,7 @@ func main() {
 
 	gnuplotWorld(world)
 	
-	for i := 0; i < 1000; i++ {
+	for i := 0; i < ticks; i++ {
 		world = world.Inflate().Tick().Deflate()
 		gnuplotWorld(world)
 	}
