@@ -20,6 +20,7 @@ import (
 	"strings"
 	"strconv"
 	"os"
+	"time"
 )
 
 // We are storing the cells (alive or dead) in a map. The keys are the Cartesian
@@ -160,6 +161,8 @@ advanced players, by creating patterns with particular properties.`,
 }
 
 func gol(d int, pattern string, ticks int) {
+	start := time.Now()
+
 	// The world
 	var world World
 	world = make(World)
@@ -204,4 +207,7 @@ func gol(d int, pattern string, ticks int) {
 		world = world.Inflate().Tick().Deflate()
 		gnuplotWorld(world)
 	}
+	
+	elapsed := time.Since(start)
+	fmt.Printf("Elapsed: %s", elapsed)
 }
